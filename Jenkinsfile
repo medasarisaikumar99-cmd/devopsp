@@ -1,6 +1,4 @@
-```groovy
 pipeline {
-
     agent any
 
     environment {
@@ -74,4 +72,3 @@ pipeline {
         }
     }
 }
-```
