@@ -1,0 +1,53 @@
+pipeline {
+    agent any
+
+    stages {
+
+        stage('Checkout') {
+            steps {
+                git branch: 'master',
+                url: 'https://github.com/medasarisaikumar99-cmd/DEMOS.git',
+                credentialsId: 'github'
+            }
+        }
+
+        stage('Build') {
+            steps {
+                sh 'mvn clean package'
+            }
+        }
+
+        stage('Test') {
+            steps {
+                sh 'mvn test'
+            }
+        }
+
+        stage('Deploy To Nexus') {
+            steps {
+
+                sh '''
+                mvn deploy:deploy-file \
+                -DgroupId=clone-project \
+                -DartifactId=clone.project \
+                -Dversion=1.0-SNAPSHOT \
+                -Dpackaging=jar \
+                -Dfile=target/clone.project-1.0-SNAPSHOT.jar \
+                -DrepositoryId=nexus \
+                -Durl=http://54.173.208.213:8081/repository/project_object/
+                '''
+            }
+        }
+    }
+
+    post {
+
+        success {
+            echo 'BUILD SUCCESS'
+        }
+
+        failure {
+            echo 'BUILD FAILURE'
+        }
+    }
+}
